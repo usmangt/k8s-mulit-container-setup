@@ -1,0 +1,34 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: postgres
+  template:
+    metadata:
+      labels:
+        component: postgres
+    spec:
+      volumes:                                           #defining volumes for data storage
+        - name: postgres-storage                         #should be same name as volumeMounts-> name 
+          persistentVolumeClaim:                         # PVC claim part
+            claimName: database-persistent-volume-claim  #identical name as defined in database-persistent-volume-clain.yaml
+      containers:
+        - name: postgres
+          image: postgres
+          ports:
+            -  containerPort: 5432
+          volumeMounts:                                  #defining volume mount points
+            - name: postgres-storage                     #should be same name as volumes->name
+              mountPath: /var/lib/postgresql/data        #default postgres mounting path
+              subPath: postgres                          #means that inside mountpath this folder postgres will be created to store data This is postgres specific
+          env:                                           #setting up ENV Variable
+            - name: POSTGRES_PASSWORD                    #postgress password (default VAR as per postgres docker image)
+              valueFrom:
+                secretKeyRef:                            #definig secret value from secret file
+                  name: my-pgpassword                    #name taken from cmd-line when creating secret key value
+                  key: MY-PGPASSWORD                     #key value taken from the cmd-line when creating secret key value

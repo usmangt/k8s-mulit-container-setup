@@ -1,0 +1,39 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      component: server
+  template:                #pod blue-print 
+    metadata:
+      labels:
+        component: server  #matching component for pod i.e. server
+    spec:
+      containers:
+        - name: server     #vaild name
+          image: stephengrider/multi-server
+          ports:
+            - containerPort: 5000
+          env:                                      #defining env variables
+            - name: REDIS_HOST                      #redis hostname
+              value: redis-cluster-ip-service       #the cluster-ip-service will take incoming request defined in that value's(NAME).yaml file
+            - name: REDIS_PORT                      #redis port
+              value: '6379'                         #hard-coded value
+            - name: PGUSER                          #postgres user
+              value: postgres                       #default user
+            - name: PGHOST                          #postgres hostname
+              value: postgres-cluster-ip-service    #the cluster-ip-service will take incoming request defined in that value's(NAME).yaml file
+            - name: PGPORT                          #postgres port
+              value: '5432'                         #hard-coded value
+            - name: PGDATABASE                      #postgres DB
+              value: postgres                       #DB default value
+            - name: MY-PGPASSWORD                   #postgress password
+              valueFrom:
+                secretKeyRef:                       #definig secret value from secret file
+                  name: my-pgpassword               #name taken from cmd-line when creating secret key value
+                  key: MY-PGPASSWORD                #key value taken from the cmd-line when creating secret key value
+

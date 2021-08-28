@@ -1,0 +1,20 @@
+--- 
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: client-deployment
+spec: 
+  replicas: 3             #as we have 3 childs running
+  selector: 
+    matchLabels:          #to match the right type
+      component: web
+  template:               #template is blueprint for pods
+    metadata: 
+      labels: 
+        component: web    #define match type for pods
+    spec: 
+      containers:         #section to define the image details
+        - image: stephengrider/multi-client
+          name: client
+          ports: 
+            - containerPort: 3000

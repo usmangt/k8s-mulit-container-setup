@@ -1,0 +1,23 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: worker
+  template:
+    metadata:
+      labels:
+        component: worker
+    spec:
+      containers:
+        - name: worker
+          image: stephengrider/mutli-worker
+          env:                                 #defining env variables
+            - name: REDIS_HOST                 #redis hostname
+              value: redis-cluster-ip-service  #the cluster-ip-service will take incoming request defined in that value's(NAME).yaml file
+            - name: REDIS_PORT                 #redis port
+              value: '6379'                    #hard-coded value

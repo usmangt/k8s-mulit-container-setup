@@ -1,0 +1,11 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim               #defining pvc object
+metadata:
+  name: database-persistent-volume-claim  #valid name
+spec:
+  accessModes:
+    - ReadWriteOnce                       #means that only a single node can read n write
+  resources:
+    requests:
+      storage: 20Mi                       #defining stroage size in Megabyte (MB) as Mi in k8s
